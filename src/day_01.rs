@@ -67,7 +67,20 @@ where
         .collect::<Vec<Acc>>()
 }
 
-fn signed_distance(rot: &Rotation) -> i32 {
+/// Converts a rotation to a signed distance.
+///
+/// # Examples
+///
+/// ```
+/// use aoc2025::day_01::{Direction, Rotation};
+///
+/// let rot = Rotation { direction: Direction::Right, distance: 10 };
+/// assert_eq!(aoc2025::day_01::signed_distance(&rot), 10);
+///
+/// let rot = Rotation { direction: Direction::Left, distance: 5 };
+/// assert_eq!(aoc2025::day_01::signed_distance(&rot), -5);
+/// ```
+pub fn signed_distance(rot: &Rotation) -> i32 {
     match rot.direction {
         Direction::Left => -rot.distance,
         Direction::Right => rot.distance,
@@ -92,20 +105,23 @@ pub fn solve_part1() -> String {
 }
 
 /// Counts how many times zero(mod 100) is crossed when moving from `from` to `to`.
+///
+/// # Examples
+///
 /// ```
-/// assert_eq!(zeroes_between(10, 15), 0);
-/// assert_eq!(zeroes_between(-1, 0), 1);
-/// assert_eq!(zeroes_between(99, 0), 1);
-/// assert_eq!(zeroes_between(0, 1), 0);
-/// assert_eq!(zeroes_between(0, 100), 0);
-/// assert_eq!(zeroes_between(50, 100), 1);
-/// assert_eq!(zeroes_between(150, 300), 2);
-/// assert_eq!(zeroes_between(-150, -300), 2);
-/// assert_eq!(zeroes_between(-150, 0), 2);
-/// assert_eq!(zeroes_between(150, -300), 5);
-/// assert_eq!(zeroes_between(-150, 300), 5);
+/// assert_eq!(aoc2025::day_01::zeroes_between(10, 15), 0);
+/// assert_eq!(aoc2025::day_01::zeroes_between(-1, 0), 1);
+/// assert_eq!(aoc2025::day_01::zeroes_between(99, 0), 1);
+/// assert_eq!(aoc2025::day_01::zeroes_between(0, 1), 0);
+/// assert_eq!(aoc2025::day_01::zeroes_between(0, 100), 0);
+/// assert_eq!(aoc2025::day_01::zeroes_between(50, 100), 1);
+/// assert_eq!(aoc2025::day_01::zeroes_between(150, 300), 2);
+/// assert_eq!(aoc2025::day_01::zeroes_between(-150, -300), 2);
+/// assert_eq!(aoc2025::day_01::zeroes_between(-150, 0), 2);
+/// assert_eq!(aoc2025::day_01::zeroes_between(150, -300), 5);
+/// assert_eq!(aoc2025::day_01::zeroes_between(-150, 300), 5);
 /// ```
-fn zeroes_between(from: i32, to: i32) -> i32 {
+pub fn zeroes_between(from: i32, to: i32) -> i32 {
     match from < to {
         true => 0,
         false => 0,
