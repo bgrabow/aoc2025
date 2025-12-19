@@ -137,5 +137,24 @@ pub fn solve_part2() -> String {
         .map(|w| zeroes_between(w[0], w[1]))
         .fold(0, |a, b| a + b);
 
+    let mut clicks = 0;
+    let mut pos = DIAL_START;
+    for d in parse_input().iter().map(signed_distance) {
+        match d < 0 {
+            true => for x in (pos + d)..pos {
+                if x.rem_euclid(DIAL_RANGE) == 0 {
+                    clicks += 1;
+                }
+            }
+            false => for x in pos..(pos + d) {
+                if x.rem_euclid(DIAL_RANGE) == 0 {
+                    clicks += 1;
+                }
+            }
+        }
+        pos += d;
+    }
+
+    //clicks.to_string()
     total_clicks.to_string()
 }
