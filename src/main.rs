@@ -20,6 +20,6 @@ fn main() {
     // println!("Result: {}", result.iter()
     //     .map(|rot| display_rotation(rot))
     //     .collect::<Vec<String>>().join("\n"));
-    println!("Day 01 solution\npart 1: {}\npart 2: {}", day_01::solve_part1(), "NYI");
+    println!("Day 01 solution\npart 1: {}\npart 2: {}", day_01::solve_part1(), day_01::solve_part2());
     println!("Time: {:?}", now.elapsed());
 }
