@@ -48,6 +48,7 @@ fn cycle(value: i32, min: i32, max: i32) -> i32 {
 const DIAL_START: i32 = 50;
 const DIAL_MAX: i32 = 99;
 const DIAL_MIN: i32 = 0;
+const DIAL_RANGE: i32 = DIAL_MAX - DIAL_MIN + 1;
 
 pub fn folds<Acc, Elem, F, I>(init: &Acc, f: F, coll: I) -> Vec<Acc>
 where
@@ -67,19 +68,6 @@ where
         .collect::<Vec<Acc>>()
 }
 
-/// Converts a rotation to a signed distance.
-///
-/// # Examples
-///
-/// ```
-/// use aoc2025::day_01::{Direction, Rotation};
-///
-/// let rot = Rotation { direction: Direction::Right, distance: 10 };
-/// assert_eq!(aoc2025::day_01::signed_distance(&rot), 10);
-///
-/// let rot = Rotation { direction: Direction::Left, distance: 5 };
-/// assert_eq!(aoc2025::day_01::signed_distance(&rot), -5);
-/// ```
 pub fn signed_distance(rot: &Rotation) -> i32 {
     match rot.direction {
         Direction::Left => -rot.distance,
@@ -104,28 +92,37 @@ pub fn solve_part1() -> String {
     password_num.to_string()
 }
 
-/// Counts how many times zero(mod 100) is crossed when moving from `from` to `to`.
-///
-/// # Examples
-///
-/// ```
-/// assert_eq!(aoc2025::day_01::zeroes_between(10, 15), 0);
-/// assert_eq!(aoc2025::day_01::zeroes_between(-1, 0), 1);
-/// assert_eq!(aoc2025::day_01::zeroes_between(99, 0), 1);
-/// assert_eq!(aoc2025::day_01::zeroes_between(0, 1), 0);
-/// assert_eq!(aoc2025::day_01::zeroes_between(0, 100), 0);
-/// assert_eq!(aoc2025::day_01::zeroes_between(50, 100), 1);
-/// assert_eq!(aoc2025::day_01::zeroes_between(150, 300), 2);
-/// assert_eq!(aoc2025::day_01::zeroes_between(-150, -300), 2);
-/// assert_eq!(aoc2025::day_01::zeroes_between(-150, 0), 2);
-/// assert_eq!(aoc2025::day_01::zeroes_between(150, -300), 5);
-/// assert_eq!(aoc2025::day_01::zeroes_between(-150, 300), 5);
-/// ```
 pub fn zeroes_between(from: i32, to: i32) -> i32 {
-    match from < to {
-        true => 0,
-        false => 0,
-    }
+    let cycles_between = (to - from) / DIAL_RANGE;
+    let normalized_to = to - (cycles_between * DIAL_RANGE);
+    let from_cycle = from.div_euclid(DIAL_RANGE);
+    let to_cycle = to.div_euclid(DIAL_RANGE);
+    let local_clicks = if normalized_to == from {
+        0
+    } else if normalized_to.rem_euclid(DIAL_RANGE) == DIAL_MIN {
+        1
+    } else if from_cycle != to_cycle {
+        1
+    } else {
+        0
+    };
+    cycles_between.abs() + local_clicks
+}
+
+#[test]
+fn zeroes_between_test() {
+    assert_eq!(zeroes_between(0, 0), 0);
+    assert_eq!(zeroes_between(10, 15), 0);
+    assert_eq!(zeroes_between(-1, 0), 1);
+    assert_eq!(zeroes_between(99, 0), 1);
+    assert_eq!(zeroes_between(0, 1), 0);
+    assert_eq!(zeroes_between(0, 100), 1);
+    assert_eq!(zeroes_between(50, 100), 1);
+    assert_eq!(zeroes_between(150, 300), 2);
+    assert_eq!(zeroes_between(-150, -300), 2);
+    assert_eq!(zeroes_between(-150, 0), 2);
+    assert_eq!(zeroes_between(150, -300), 5);
+    assert_eq!(zeroes_between(-150, 300), 5);
 }
 
 pub fn solve_part2() -> String {
@@ -135,7 +132,10 @@ pub fn solve_part2() -> String {
         parse_input().iter().map(signed_distance),
     );
 
-    let _intervals = steps.windows(2).map(|w| zeroes_between(w[0], w[1])).collect::<Vec<i32>>();
+    let total_clicks = steps
+        .windows(2)
+        .map(|w| zeroes_between(w[0], w[1]))
+        .fold(0, |a, b| a + b);
 
-    String::from("NYI")
+    total_clicks.to_string()
 }
