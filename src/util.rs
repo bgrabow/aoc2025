@@ -1,5 +1,6 @@
 use std::fs::File;
 use std::io::Read;
+use std::iter;
 use std::path::Path;
 
 pub fn file_to_string(path: &str) -> String {
@@ -15,4 +16,22 @@ pub fn file_to_string(path: &str) -> String {
             }
         },
     }
+}
+
+pub fn folds<Acc, Elem, F, I>(init: &Acc, f: F, coll: I) -> Vec<Acc>
+where
+    Acc: Clone,
+    F: Fn(Acc, Elem) -> Acc,
+    I: Iterator<Item = Elem>,
+{
+    let mut acc = init.clone();
+    let first = iter::once(init.clone());
+
+    first
+        .chain(coll.map(|elem| {
+            let new_acc = f(acc.clone(), elem);
+            acc = new_acc;
+            acc.clone()
+        }))
+        .collect::<Vec<Acc>>()
 }
