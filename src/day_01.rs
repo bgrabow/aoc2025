@@ -133,4 +133,8 @@ fn part2_test() {
         solve_part2(&util::file_to_string("resources/input_01.txt")),
         "5820"
     );
+    assert_eq!(
+        solve_part2(&util::file_to_string("resources/input_01_example.txt")),
+        "6"
+    );
 }
