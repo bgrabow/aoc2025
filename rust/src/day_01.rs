@@ -81,10 +81,10 @@ pub fn zeroes_between(from: i32, to: i32) -> i32 {
 fn zeroes_between_test() {
     // Method invocation via . has higher precedence than negation via - operator.
     assert_eq!((-1i32).div_euclid(DIAL_RANGE), -1);
+    assert_eq!(-1i32.div_euclid(DIAL_RANGE), 0);
     assert_eq!(100i32.div_euclid(DIAL_RANGE), 1);
     assert_eq!(99i32.div_euclid(DIAL_RANGE), 0);
     assert_eq!(0i32.div_euclid(DIAL_RANGE), 0);
-    assert_eq!(-1i32.div_euclid(DIAL_RANGE), 0);
     assert_eq!(0i32 % DIAL_RANGE, 0);
     assert_eq!(1i32 % DIAL_RANGE, 1);
     assert_eq!(99i32 % DIAL_RANGE, 99);
