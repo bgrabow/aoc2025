@@ -60,26 +60,24 @@ pub fn factors(x: i64) -> Vec<i64> {
 fn invalid_ids_sum(lb: i64, ub: i64) -> i64 {
     let lb_mag = tens_magnitude(lb);
     let ub_mag = tens_magnitude(ub);
+    let ids_sum_in_mag = |mag:i64| -> i64 {
+        let lb = cmp::max(lb, pow(10i64, mag - 1));
+        let ub = cmp::min(ub, pow(10i64, mag) - 1);
+
+        let lb_prefix = prefix(lb);
+        let ub_prefix = prefix(ub);
+        let lowest_invalid_id = if repeated(lb_prefix) >= lb { repeated(lb_prefix) } else { repeated(lb_prefix + 1) };
+        let highest_invalid_id = if repeated(ub_prefix) <= ub { repeated(ub_prefix) } else { repeated(ub_prefix - 1) };
+        if highest_invalid_id < lowest_invalid_id {
+            0
+        } else {
+            range_sum(prefix(lowest_invalid_id), prefix(highest_invalid_id))
+        }
+    };
 
     (lb_mag..=ub_mag)
-        .map(|mag| {
-            if mag % 2 == 0 {
-                let lb = cmp::max(lb, pow(10i64, mag - 1));
-                let ub = cmp::min(ub, pow(10i64, mag) - 1);
-
-                let lb_prefix = prefix(lb);
-                let ub_prefix = prefix(ub);
-                let lowest_invalid_id = if repeated(lb_prefix) >= lb { repeated(lb_prefix) } else { repeated(lb_prefix + 1) };
-                let highest_invalid_id = if repeated(ub_prefix) <= ub { repeated(ub_prefix) } else { repeated(ub_prefix - 1) };
-                if highest_invalid_id < lowest_invalid_id {
-                    0
-                } else {
-                    range_sum(prefix(lowest_invalid_id), prefix(highest_invalid_id))
-                }
-            } else {
-                0
-            }
-        })
+        .filter(|x| -> bool { x % 2 == 0 })
+        .map(ids_sum_in_mag)
         .fold(0, |a, b| a + b)
 }
 
@@ -129,63 +127,58 @@ fn p2_invalid_ids_sum_fast(lb: i64, ub: i64) -> i64 {
 
     (lb_mag..=ub_mag)
         .map(|mag| {
-            let mut total = 0;
-
             // Try all possible segment sizes (number of segments)
-            for num_segments in 2..=mag {
-                if mag % num_segments != 0 {
-                    continue;
-                }
+            (2..=mag)
+                .filter(|&num_segments| mag % num_segments == 0)
+                .map(|num_segments| {
+                    let segment_size = mag / num_segments;
 
-                let segment_size = mag / num_segments;
+                    // Find the range of values for this magnitude
+                    let mag_lb = cmp::max(lb, pow(10, mag - 1));
+                    let mag_ub = cmp::min(ub, pow(10, mag) - 1);
 
-                // Find the range of values for this magnitude
-                let mag_lb = cmp::max(lb, pow(10, mag - 1));
-                let mag_ub = cmp::min(ub, pow(10, mag) - 1);
+                    // Compute the prefix range for this segment size
+                    let lb_prefix = mag_lb / pow(10, mag - segment_size);
+                    let ub_prefix = mag_ub / pow(10, mag - segment_size);
 
-                // Compute the prefix range for this segment size
-                let lb_prefix = mag_lb / pow(10, mag - segment_size);
-                let ub_prefix = mag_ub / pow(10, mag - segment_size);
+                    // For each prefix, construct the repeated value
+                    let mut total = 0;
+                    for prefix_val in lb_prefix..=ub_prefix {
+                        let mut value = prefix_val;
+                        for _ in 1..num_segments {
+                            value = value * pow(10, segment_size) + prefix_val;
+                        }
 
-                // For each prefix, construct the repeated value
-                for prefix_val in lb_prefix..=ub_prefix {
-                    let mut value = prefix_val;
-                    for _ in 1..num_segments {
-                        value = value * pow(10, segment_size) + prefix_val;
-                    }
-
-                    // Check if this value is within bounds
-                    if value < mag_lb || value > mag_ub {
-                        continue;
-                    }
-
-                    // Only count if this is the smallest segment size that creates this pattern
-                    let mut is_smallest = true;
-                    for smaller_num_segments in 2..num_segments {
-                        if mag % smaller_num_segments != 0 {
+                        // Check if this value is within bounds
+                        if value < mag_lb || value > mag_ub {
                             continue;
                         }
-                        let smaller_segment_size = mag / smaller_num_segments;
-                        let smaller_prefix = value / pow(10, mag - smaller_segment_size);
-                        let mut reconstructed = smaller_prefix;
-                        for _ in 1..smaller_num_segments {
-                            reconstructed = reconstructed * pow(10, smaller_segment_size) + smaller_prefix;
+
+                        // Only count if this is the smallest segment size that creates this pattern
+                        let mut is_smallest = true;
+                        for smaller_num_segments in 2..num_segments {
+                            if mag % smaller_num_segments != 0 {
+                                continue;
+                            }
+                            let smaller_segment_size = mag / smaller_num_segments;
+                            let smaller_prefix = value / pow(10, mag - smaller_segment_size);
+                            let mut reconstructed = smaller_prefix;
+                            for _ in 1..smaller_num_segments {
+                                reconstructed = reconstructed * pow(10, smaller_segment_size) + smaller_prefix;
+                            }
+                            if reconstructed == value {
+                                is_smallest = false;
+                                break;
+                            }
                         }
-                        if reconstructed == value {
-                            is_smallest = false;
-                            break;
+
+                        if is_smallest {
+                            total += value;
                         }
                     }
-
-                    if is_smallest {
-                        total += value;
-                    }
-                }
-            }
-
-            total
-        })
-        .fold(0, |a, b| a + b)
+                    total
+                }).sum::<i64>()
+        }).sum::<i64>()
 }
 
 fn parse(x: &str) -> Vec<(i64, i64)> {
