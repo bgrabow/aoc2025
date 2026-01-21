@@ -32,7 +32,7 @@
     (count))
   )
 
-#_(defn solve-part-2
+(defn solve-part-2
   [input]
   (->> (rotations input)
             (partition 2 1)
