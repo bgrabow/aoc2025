@@ -59,6 +59,5 @@
 (comment
   (let [input (slurp "../rust/resources/input_01.txt")
         example (slurp "../rust/resources/input_01_example.txt")]
-    #_(solve-part-1 input)
-    ;(solve-part-2 example)
-    (solve-part-2 input)))
+    [(solve-part-1 input)
+     (solve-part-2 input)]))
