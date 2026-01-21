@@ -84,14 +84,38 @@
 (tests
   (invalid-ids [11 22]) := [11 22])
 
+(defn has-repeated-pattern?
+  [x]
+  (let [mag (tens-magnitude x)]
+    (->> (range 2 (inc mag))
+      (filter even?)
+      (map (fn [divisor]
+             (let [segment-length (quot mag divisor)
+                   segment-value (quot x (math/expt 10 (- mag segment-length)))]
+               (->> (range 0 divisor)
+                 (map #(* segment-value (math/expt 10 %)))
+                 (reduce +)))))
+      (some #(= x %)))))
+
+(defn p2-invalid-ids
+  [[lb ub]]
+  (->> (range lb (inc ub))
+    (filter has-repeated-pattern?)))
+
 (defn solve-part-1
   [s]
   (->> (parse s)
     (mapcat invalid-ids)
     (reduce +)))
 
+(defn solve-part-2
+  [s]
+  (->> (parse s)
+    (mapcat p2-invalid-ids)
+    (reduce +)))
+
 (comment
   (let [input (slurp "../rust/resources/input_02.txt")
         example (slurp "../rust/resources/input_02_example.txt")]
     [(solve-part-1 input)
-     #_(solve-part-2 input)]))
+     (solve-part-2 input)]))
