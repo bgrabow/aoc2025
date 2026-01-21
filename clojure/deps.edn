@@ -1,8 +1,10 @@
 {:paths ["resources" "src"]
+ :test-paths ["dev"]
  :aliases {:dev {:extra-paths ["dev"]
                  :jvm-opts ["-Dhyperfiddle.rcf.generate-tests=true"
                             "-XX:-OmitStackTraceInFastThrow"]}
            :prod {}
            :test {:jvm-opts ["-Dhyperfiddle.rcf.generate-tests=true"
                              "-XX:-OmitStackTraceInFastThrow"]}}
- :deps {com.hyperfiddle/rcf {:mvn/version "20220926-202227"}}}
+ :deps {com.hyperfiddle/rcf {:mvn/version "20220926-202227"}
+        org.clojure/math.numeric-tower {:mvn/version "0.1.1"}}}

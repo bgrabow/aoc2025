@@ -49,8 +49,18 @@ fn repeated_test() {
     assert_eq!(repeated(123), 123123);
 }
 
+pub fn prefix_range(lb_prefix: i64, ub_prefix:i64) -> impl Iterator<Item = i64> {
+    (lb_prefix..=ub_prefix).map(|x| repeated(x))
+}
+
+#[test]
+fn prefix_range_test() {
+    assert_eq!(prefix_range(11, 22).collect::<Vec<_>>(), vec![1111, 1212, 1313, 1414, 1515, 1616, 1717, 1818, 1919, 2020, 2121, 2222]);
+    assert_eq!(prefix_range(1, 2).collect::<Vec<_>>(), vec![11, 22]);
+}
+
 pub fn range_sum(lb_prefix: i64, ub_prefix:i64) -> i64 {
-    (lb_prefix..=ub_prefix).map(|x| repeated(x)).sum()
+    prefix_range(lb_prefix, ub_prefix).sum()
 }
 
 pub fn factors(x: i64) -> Vec<i64> {
