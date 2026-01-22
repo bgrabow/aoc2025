@@ -34,40 +34,54 @@
             (vec (repeat (inc overall-length) \.)) row)))
       beam-rows)))
 
-(defn solve-part-1
+(defn splits
   [s]
   (let [{:keys [beams splitters]} (parse s)]
-    (count-splits (reductions split beams splitters) splitters)))
+    (reductions split beams splitters)))
+
+(defn solve-part-1
+  [s]
+  (let [{:keys [splitters]} (parse s)]
+    (count-splits (splits s) splitters)))
 
 (tests
   (solve-part-1 (slurp "../rust/resources/input_07_example.txt")) := 21)
 
+(defn propagate-timelines
+  [timelines splitters]
+  (let [splits (set/intersection splitters (set (keys timelines)))]
+    (merge-with +
+      (apply dissoc timelines splits)
+      (apply merge-with +
+        (map
+          (fn [x]
+            {(dec x) (get timelines x)
+             (inc x) (get timelines x)})
+          splits)))))
+
+(tests
+  (propagate-timelines {7 1} #{7}) := {6 1 8 1}
+  (propagate-timelines {7 1 8 1} #{7}) := {6 1 8 2}
+  (propagate-timelines
+    {7 1
+     8 1
+     9 1}
+    #{7 9})
+  := {6  1
+      8  3
+      10 1})
+
 (defn solve-part-2
   [s]
-  (let [{:keys [beams splitters]} (parse s)
-        beam-paths (reductions split beams splitters)]
-    (reduce
-      (fn [timelines [beams splitters]]
-        (let [splits (set/intersection beams splitters)]
-          (merge (apply dissoc timelines (mapcat (juxt inc dec) splits))
-            (zipmap splits (map (fn [x]
-                                  (try (+ (get timelines (dec x))
-                                     (get timelines (inc x)))
-                                       (catch Exception _
-                                         (throw (ex-info "Timeline not found" {:x x
-                                                                               :dec-x (type (dec x))
-                                                                               :inc-x (type (inc x))
-                                                                               :timelines timelines
-                                                                               :beams beams
-                                                                               :splitters splitters})))))
-                             splits)))))
-      (zipmap (last beam-paths) (repeat 1))
-      (map vector
-        (drop 1 (reverse beam-paths))
-        (reverse splitters)))))
+  (let [{:keys [beams splitters]} (parse s)]
+    (reduce + (vals (reduce propagate-timelines {(first beams) 1} splitters)))))
+
+(tests
+  (solve-part-2 (slurp "../rust/resources/input_07_example.txt")) := 40)
 
 (comment
   (solve-part-1 (slurp "../rust/resources/input_07.txt"))
   (solve-part-1 (slurp "../rust/resources/input_07_example.txt"))
   (solve-part-2 (slurp "../rust/resources/input_07.txt"))
+  (splits (slurp "../rust/resources/input_07_example.txt"))
   (solve-part-2 (slurp "../rust/resources/input_07_example.txt")))
