@@ -1,4 +1,4 @@
-(ns day-05
+(ns aoc2025.day-05
   (:require
     [clojure.string :as str]
     [hyperfiddle.rcf :refer [tests]]))
@@ -11,8 +11,8 @@
   [fresh-ranges ingredient]
   (boolean (some #(in-range? % ingredient) fresh-ranges)))
 
-(tests
-  (let [fresh-ranges [[3 5] [10 14] [16 20] [12 18]]]
+(let [fresh-ranges [[3 5] [10 14] [16 20] [12 18]]]
+  (tests
     (fresh? fresh-ranges 1) := false
     (fresh? fresh-ranges 5) := true
     (fresh? fresh-ranges 8) := false

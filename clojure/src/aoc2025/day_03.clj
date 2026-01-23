@@ -1,4 +1,4 @@
-(ns day-03
+(ns aoc2025.day-03
   (:require
     [clojure.string :as str]
     [hyperfiddle.rcf :refer [tests]]))

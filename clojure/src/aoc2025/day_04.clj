@@ -1,6 +1,7 @@
-(ns day-04
+(ns aoc2025.day-04
   (:require
     [clojure.string :as str]
+    [aoc2025.util :as util]
     [hyperfiddle.rcf :refer [tests]]))
 
 (defn neighbors
@@ -44,7 +45,7 @@
 (defn iterate-until-fixed
   [f x]
   (map first
-    (take-until #(apply = %)
+    (util/take-until #(apply = %)
       (partition 2 1
         (iterate f x)))))
 

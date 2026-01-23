@@ -1,4 +1,4 @@
-(ns day-02
+(ns aoc2025.day-02
   (:require
     [hyperfiddle.rcf :refer [tests]]
     [clojure.math.numeric-tower :as math]))
@@ -116,6 +116,6 @@
 
 (comment
   (let [input (slurp "../rust/resources/input_02.txt")
-        example (slurp "../rust/resources/input_02_example.txt")]
+        _example (slurp "../rust/resources/input_02_example.txt")]
     [(solve-part-1 input)
      (solve-part-2 input)]))

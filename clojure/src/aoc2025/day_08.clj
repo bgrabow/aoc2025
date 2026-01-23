@@ -1,4 +1,4 @@
-(ns day-08
+(ns aoc2025.day-08
   (:require
     [clojure.set :as set]
     [clojure.string :as str]
