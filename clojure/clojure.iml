@@ -18,6 +18,7 @@
     <orderEntry type="library" name="Deps: org.clojure/clojure:1.12.3" level="project" />
     <orderEntry type="library" name="Deps: com.hyperfiddle/rcf:20220926-202227" level="project" />
     <orderEntry type="library" name="Deps: org.clojure/math.numeric-tower:0.1.1" level="project" />
+    <orderEntry type="library" name="Deps: org.clojure/math.combinatorics:0.3.2" level="project" />
     <orderEntry type="library" name="Deps: org.clojure/spec.alpha:0.5.238" level="project" />
     <orderEntry type="library" name="Deps: org.clojure/core.specs.alpha:0.4.74" level="project" />
   </component>

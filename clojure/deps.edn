@@ -7,4 +7,5 @@
            :test {:jvm-opts ["-Dhyperfiddle.rcf.generate-tests=true"
                              "-XX:-OmitStackTraceInFastThrow"]}}
  :deps {com.hyperfiddle/rcf {:mvn/version "20220926-202227"}
-        org.clojure/math.numeric-tower {:mvn/version "0.1.1"}}}
+        org.clojure/math.numeric-tower {:mvn/version "0.1.1"}
+        org.clojure/math.combinatorics {:mvn/version "0.3.2"}}}
