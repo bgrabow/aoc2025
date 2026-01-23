@@ -38,6 +38,18 @@
 (tests
   (solve-part-1 (slurp "../rust/resources/input_10_example.txt")) := 7)
 
+(defn heuristic
+  [current target]
+  (reduce + (map (comp abs -) current target)))
+
+(tests
+  (heuristic [0 0 0] [10 15 20]) := 45
+  (heuristic [9 16 19] [10 15 20]) := 3)
+
+(defn a-star
+  [init steps target]
+  {})
+
 (defn solve-part-2
   [_s])
 
